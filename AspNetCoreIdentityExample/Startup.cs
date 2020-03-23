@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using AspNetCoreIdentityExample.CustomValidations;
 using AspNetCoreIdentityExample.Models.Authentication;
 using AspNetCoreIdentityExample.Models.Context;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -62,7 +63,14 @@ namespace AspNetCoreIdentityExample
             });
             services.AddSingleton<IAuthorizationHandler, TimeHandler>();
 
-           // services.AddControllersWithViews();
+            // services.AddControllersWithViews();
+            services.AddScoped<IClaimsTransformation, UserClaimProvider>();
+            // manuel Claim policy/politika(Yetki) tipi oluşturulup sisteme eklenir.
+            // istenilen metot veya controllere authorize yetksi olarak eklenerek yetki kontrolü yapılması sağlanabilir.
+            // Bu alanalr daha çok kullanıcı bazlı özellikleri tutmak için düşünülebilir.
+            services.AddAuthorization(x => x.AddPolicy("UserClaimNamePolicy", policy => policy.RequireClaim("username", "gncy")));
+            services.AddAuthorization(x => x.AddPolicy("UserClaimPositionPolicy", policy => policy.RequireClaim("pozisyon", "admin")));
+
 
             services.AddMvc();
         }

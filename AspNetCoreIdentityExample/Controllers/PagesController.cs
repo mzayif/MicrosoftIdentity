@@ -22,7 +22,7 @@ namespace AspNetCoreIdentityExample.Controllers
             return View();
         }
 
-        [Authorize(Roles = "Moderator", Policy = "TimeControl")]
+        [Authorize(Roles = "Moderator")]
         public IActionResult Page3()
         {
             return View();
@@ -30,6 +30,24 @@ namespace AspNetCoreIdentityExample.Controllers
 
         [Authorize(Roles = "Admin")]
         public IActionResult Page4()
+        {
+            return View();
+        }
+
+        [Authorize(Policy = "TimeControl")]
+        public IActionResult Page5()
+        {
+            return View();
+        }
+
+        [Authorize(Policy = "UserClaimNamePolicy")]
+        public IActionResult Page6()
+        {
+            return View();
+        }
+
+        [Authorize(Policy = "UserClaimPositionPolicy")]
+        public IActionResult Page7()
         {
             return View();
         }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Mail;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
 using AspNetCoreIdentityExample.Models.Authentication;
@@ -68,7 +69,9 @@ namespace AspNetCoreIdentityExample.Controllers
             if (ModelState.IsValid)
             {
                 AppUser user = await _userManager.FindByEmailAsync(model.Email);
+                var userClaims = await _userManager.GetClaimsAsync(user); // Bu işlem ile kullanıcı adına DB de tanımlı olan claims ler var ise getirilir.
                 if (user != null)
+                    if (user != null)
                 {
                     //İlgili kullanıcıya dair önceden oluşturulmuş bir Cookie varsa siliyoruz.
                     await _signInManager.SignOutAsync();
@@ -76,6 +79,11 @@ namespace AspNetCoreIdentityExample.Controllers
 
                     if (result.Succeeded)
                     {
+                        // burada eğer kullanıcı için DB de belrtilen türde bir claim tanımlaması yok ise eklenir.
+                        Claim claim = new Claim("pozisyon", "admin");
+                        if (!userClaims.Any(x => x.Type == "pozisyon"))
+                            await _userManager.AddClaimAsync(user, claim);
+
                         await _userManager.ResetAccessFailedCountAsync(user); //Önceki hataları girişler neticesinde +1 arttırılmış tüm değerleri 0(sıfır)a çekiyoruz.
 
                         if (string.IsNullOrEmpty(TempData["returnUrl"] != null ? TempData["returnUrl"].ToString() : ""))
