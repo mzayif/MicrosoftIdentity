@@ -173,6 +173,12 @@ namespace AspNetCoreIdentityExample.Controllers
             return View();
         }
 
+        public async Task<IActionResult> EditProfile()
+        {
+            UserDetailViewModel userDetail = await _userManager.FindByNameAsync(User.Identity.Name);
+            return View(userDetail);
+        }
+
         [HttpPost]
         public async Task<IActionResult> EditProfile(UserDetailViewModel model)
         {
@@ -191,6 +197,11 @@ namespace AspNetCoreIdentityExample.Controllers
                 await _signInManager.SignInAsync(user, true);
             }
             return RedirectToAction("Index");
+        }
+
+        public IActionResult EditPassword()
+        {
+            return View();
         }
 
         [HttpPost]
@@ -213,6 +224,12 @@ namespace AspNetCoreIdentityExample.Controllers
                 }
             }
             return RedirectToAction("Index");
+        }
+
+        public async Task<IActionResult> Profile()
+        {
+            UserDetailViewModel userDetail = await _userManager.FindByNameAsync(User.Identity.Name);
+            return View(userDetail);
         }
     }
 }

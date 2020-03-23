@@ -1,0 +1,38 @@
+﻿@model IEnumerable<AspNetCoreIdentityExample.Models.Authentication.AppRole>
+
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+<h1>Roller</h1>
+
+<p>
+    <a asp-action="CreateRole">Create</a>
+</p>
+<table class="table">
+    <thead>
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.OlusturulmaTarihi)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Name)
+        </th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.OlusturulmaTarihi)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                <a asp-action="DeleteRole" asp-controller="Role" asp-route-id="@item.Id">Delete</a>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

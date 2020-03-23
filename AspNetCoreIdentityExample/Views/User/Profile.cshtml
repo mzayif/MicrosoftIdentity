@@ -1,0 +1,29 @@
+﻿@model AspNetCoreIdentityExample.Models.ViewModels.UserDetailViewModel
+
+<div>
+    <h4>Profil Bilgileri</h4>
+    <hr />
+    <table>
+        <thead>
+        <tr>
+            <th>@Html.DisplayNameFor(model => model.UserName)</th>
+            <th>@Html.DisplayNameFor(model => model.Email)</th>
+            <th>@Html.DisplayNameFor(model => model.PhoneNumber)</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>@Html.DisplayFor(model => model.UserName)</td>
+            <td>@Html.DisplayFor(model => model.Email)</td>
+            <td>@Html.DisplayFor(model => model.PhoneNumber)</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<div>
+    @Html.ActionLink("Bilgileri Düzenle", "EditProfile") |
+</div>
+
+<div>
+    @Html.ActionLink("Şifre Değiştir", "EditPassword") |
+</div>
