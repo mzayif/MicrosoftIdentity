@@ -71,6 +71,12 @@ namespace AspNetCoreIdentityExample
             services.AddAuthorization(x => x.AddPolicy("UserClaimNamePolicy", policy => policy.RequireClaim("username", "gncy")));
             services.AddAuthorization(x => x.AddPolicy("UserClaimPositionPolicy", policy => policy.RequireClaim("pozisyon", "admin")));
 
+            services.AddAuthentication().AddFacebook(x =>
+            {
+                x.AppId = Configuration["FacebookAppId"];
+                x.AppSecret = Configuration["FacebookAppSecret"];
+                x.CallbackPath = new PathString("/User/Hata");
+            });
 
             services.AddMvc();
         }

@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Web;
 using AspNetCoreIdentityExample.Models.Authentication;
 using AspNetCoreIdentityExample.Models.ViewModels;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -238,6 +239,60 @@ namespace AspNetCoreIdentityExample.Controllers
         {
             UserDetailViewModel userDetail = await _userManager.FindByNameAsync(User.Identity.Name);
             return View(userDetail);
+        }
+
+        public IActionResult FacebookLogin(string ReturnUrl)
+        {
+            string redirectUrl = Url.Action("FacebookResponse", "User", new { ReturnUrl = ReturnUrl });
+            //Facebook'a yapılan Login talebi neticesinde kullanıcıyı yönlendirmesini istediğimiz url'i oluşturuyoruz.
+            AuthenticationProperties properties = _signInManager.ConfigureExternalAuthenticationProperties("Facebook", redirectUrl);
+            //Bağlantı kurulacak harici platformun hangisi olduğunu belirtiyor ve bağlantı özelliklerini elde ediyoruz.
+            return new ChallengeResult("Facebook", properties);
+            //ChallengeResult; kimlik doğrulamak için gerekli olan tüm özellikleri kapsayan AuthenticationProperties nesnesini alır ve ayarlar.
+        }
+
+        public async Task<IActionResult> FacebookResponse(string ReturnUrl = "/")
+        {
+            ExternalLoginInfo loginInfo = await _signInManager.GetExternalLoginInfoAsync();
+            //Kullanıcıyla ilgili Facebook'tan gelen tüm bilgileri taşıyan nesnedir.
+            //Bu nesnesnin 'LoginProvider' propertysinin değerine göz atarsanız eğer Facebook yazdığını göreceksiniz.
+            //Eğer ki, Login işlemi Google yahut Twitter üzerinde gerçekleştirilmiş olsaydı provider olarak ilgili platformun adı yazacaktı.
+            if (loginInfo == null)
+                return RedirectToAction("Login");
+            else
+            {
+                Microsoft.AspNetCore.Identity.SignInResult loginResult = await _signInManager.ExternalLoginSignInAsync(loginInfo.LoginProvider, loginInfo.ProviderKey, true);
+                //Giriş yapıyoruz.
+                if (loginResult.Succeeded)
+                    return Redirect(ReturnUrl);
+                else
+                {
+                    //Eğer ki akış bu bloğa girerse ilgili kullanıcı uygulamamıza kayıt olmadığından dolayı girişi başarısız demektir.
+                    //O halde kayıt işlemini yapıp, ardından giriş yaptırmamız gerekmektedir.
+                    AppUser user = new AppUser
+                    {
+                        Email = loginInfo.Principal.FindFirst(ClaimTypes.Email).Value,
+                        UserName = loginInfo.Principal.FindFirst(ClaimTypes.Email).Value
+                    };
+                    //Facebook'tan gelen Claimleri uygun eşlendikleri propertylere atıyoruz.
+                    IdentityResult createResult = await _userManager.CreateAsync(user);
+                    //Kullanıcı kaydını yapıyoruz.
+                    if (createResult.Succeeded)
+                    {
+                        //Eğer kayıt başarılıysa ilgili kullanıcı bilgilerini AspNetUserLogins tablosuna kaydetmemiz gerekmektedir ki
+                        //bir sonraki Facebook login talebinde Identity mimarisi ilgili kullanıcının Facebook'tan geldiğini anlayabilsin.
+                        IdentityResult addLoginResult = await _userManager.AddLoginAsync(user, loginInfo);
+                        //Kullanıcı bilgileri Facebook'tan gelen bilgileriyle AspNetUserLogins tablosunda eşleştirilmek suretiyle kaydedilmiştir.
+                        if (addLoginResult.Succeeded)
+                        {
+                            await _signInManager.SignInAsync(user, true);
+                            return Redirect(ReturnUrl);
+                        }
+                    }
+
+                }
+            }
+            return Redirect(ReturnUrl);
         }
     }
 }
