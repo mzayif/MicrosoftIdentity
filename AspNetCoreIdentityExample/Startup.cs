@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using AspNetCoreIdentityExample.CustomValidations;
 using AspNetCoreIdentityExample.Models.Authentication;
 using AspNetCoreIdentityExample.Models.Context;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -55,7 +56,13 @@ namespace AspNetCoreIdentityExample
                 m.ExpireTimeSpan = TimeSpan.FromMinutes(2); //CookieBuilder nesnesinde tanımlanan Expiration değerinin varsayılan değerlerle ezilme ihtimaline karşın tekrardan Cookie vadesi burada da belirtiliyor.
                 m.AccessDeniedPath = new PathString("/authority/page");
             });
+            services.AddAuthorization(x =>
+            {
+                x.AddPolicy("TimeControl", policy => policy.Requirements.Add(new TimeRequirement()));
+            });
+            services.AddSingleton<IAuthorizationHandler, TimeHandler>();
 
+           // services.AddControllersWithViews();
 
             services.AddMvc();
         }
@@ -68,6 +75,7 @@ namespace AspNetCoreIdentityExample
             app.UseStatusCodePages();
             app.UseStaticFiles();
             app.UseAuthentication();
+           // app.UseAuthorization();
             app.UseMvc(_ => _.MapRoute("Default", "{controller=Home}/{action=Index}/{id?}"));
         }
     }

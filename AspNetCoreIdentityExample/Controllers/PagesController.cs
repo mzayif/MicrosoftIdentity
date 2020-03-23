@@ -22,7 +22,7 @@ namespace AspNetCoreIdentityExample.Controllers
             return View();
         }
 
-        [Authorize(Roles = "Moderator")]
+        [Authorize(Roles = "Moderator", Policy = "TimeControl")]
         public IActionResult Page3()
         {
             return View();
