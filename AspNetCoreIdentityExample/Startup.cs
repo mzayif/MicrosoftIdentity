@@ -42,6 +42,7 @@ namespace AspNetCoreIdentityExample
             services.ConfigureApplicationCookie(m =>
             {
                 m.LoginPath = new PathString("/User/Login");
+                m.LogoutPath = new PathString("/User/Logout");
                 m.Cookie = new CookieBuilder
                 {
                     Name = "AspNetCoreIdentityExampleCookie", //Oluşturulacak Cookie'yi isimlendiriyoruz.

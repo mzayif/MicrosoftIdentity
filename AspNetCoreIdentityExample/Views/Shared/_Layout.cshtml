@@ -13,7 +13,7 @@
         <a asp-action="Index" asp-controller="User">Index</a> |
         <a asp-action="Signin" asp-controller="User">Signin</a> |
         <a asp-action="Login" asp-controller="User">Login</a> |
-        <a asp-action="Logout" asp-controller="User">Out</a>
+        <a asp-action="Logout" asp-controller="User" asp-route-returnUrl="/User/Signin">Logout</a>
         <br />
         @RenderBody()
     </div>
