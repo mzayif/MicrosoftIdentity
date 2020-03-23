@@ -36,6 +36,7 @@ namespace AspNetCoreIdentityExample
                 .AddUserValidator<CustomUserValidation>()
                 .AddPasswordValidator<CustomPasswordValidation>()
                 .AddErrorDescriber<CustomIdentityErrorDescriber>()
+                .AddDefaultTokenProviders()
                 .AddEntityFrameworkStores<AppDbContext>();
 
             services.ConfigureApplicationCookie(m =>
