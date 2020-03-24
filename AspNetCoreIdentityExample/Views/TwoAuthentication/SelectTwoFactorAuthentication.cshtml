@@ -1,0 +1,16 @@
+﻿@using AspNetCoreIdentityExample.Models.Enums
+@model AspNetCoreIdentityExample.Models.ViewModels.TwoFactorTypeSelectVM
+
+<div class="row">
+    <div class="col-md-4"></div>
+    <div class="col-md-4">
+        <form method="post">
+            <div class="form-group">
+                <label for="exampleFormControlSelect1">İki adımlı doğrulama yöntemi seçiniz</label>
+                <select class="form-control" asp-for="TwoFactorType" asp-items="Html.GetEnumSelectList<TwoFactorType>()"></select>
+            </div>
+            <button type="submit" class="btn btn-danger">Seç</button>
+        </form>
+    </div>
+    <div class="col-md-4"></div>
+</div>

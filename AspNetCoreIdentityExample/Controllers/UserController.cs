@@ -70,9 +70,8 @@ namespace AspNetCoreIdentityExample.Controllers
             if (ModelState.IsValid)
             {
                 AppUser user = await _userManager.FindByEmailAsync(model.Email);
-                var userClaims = await _userManager.GetClaimsAsync(user); // Bu işlem ile kullanıcı adına DB de tanımlı olan claims ler var ise getirilir.
+                var userClaims =await _userManager.GetClaimsAsync(user); // Bu işlem ile kullanıcı adına DB de tanımlı olan claims ler var ise getirilir.
                 if (user != null)
-                    if (user != null)
                 {
                     //İlgili kullanıcıya dair önceden oluşturulmuş bir Cookie varsa siliyoruz.
                     await _signInManager.SignOutAsync();
@@ -94,18 +93,29 @@ namespace AspNetCoreIdentityExample.Controllers
                     }
                     else
                     {
+                        // kullanıcı adı ve şifresi doğru ancak ggirişi başarılı olmamış ve kullanıcı için ikili doğrulama istenmiş ise.
+                        // kullanıcının 2 doğrulama sistemi hangisi ise onun için yönlendirme yapılır.
+                        // Bizim örneğimizde google Auth ile birlikte kod doğrulama ile girilecektir.
+                        if (result.RequiresTwoFactor)
+                            return RedirectToAction("twofactorauthenticate", new { ReturnUrl = TempData["returnUrl"] });
+
                         await _userManager.AccessFailedAsync(user); //Eğer ki başarısız bir account girişi söz konusu ise AccessFailedCount kolonundaki değer +1 arttırılacaktır. 
 
-                        int failcount = await _userManager.GetAccessFailedCountAsync(user); //Kullanıcının yapmış olduğu başarısız giriş deneme adedini alıyoruz.
+                        int failcount =await _userManager.GetAccessFailedCountAsync(user); //Kullanıcının yapmış olduğu başarısız giriş deneme adedini alıyoruz.
                         if (failcount == 3)
                         {
-                            await _userManager.SetLockoutEndDateAsync(user, new DateTimeOffset(DateTime.Now.AddMinutes(1))); //Eğer ki başarısız giriş denemesi 3'ü bulduysa ilgili kullanıcının hesabını kilitliyoruz.
-                            ModelState.AddModelError("Locked", "Art arda 3 başarısız giriş denemesi yaptığınızdan dolayı hesabınız 1 dk kitlenmiştir.");
+                            await _userManager.SetLockoutEndDateAsync(user,
+                                new DateTimeOffset(DateTime.Now
+                                    .AddMinutes(
+                                        1))); //Eğer ki başarısız giriş denemesi 3'ü bulduysa ilgili kullanıcının hesabını kilitliyoruz.
+                            ModelState.AddModelError("Locked",
+                                "Art arda 3 başarısız giriş denemesi yaptığınızdan dolayı hesabınız 1 dk kitlenmiştir.");
                         }
                         else
                         {
                             if (result.IsLockedOut)
-                                ModelState.AddModelError("Locked", "Art arda 3 başarısız giriş denemesi yaptığınızdan dolayı hesabınız 1 dk kilitlenmiştir.");
+                                ModelState.AddModelError("Locked",
+                                    "Art arda 3 başarısız giriş denemesi yaptığınızdan dolayı hesabınız 1 dk kilitlenmiştir.");
                             else
                                 ModelState.AddModelError("NotUser2", "E-posta veya şifre yanlış.");
                         }
@@ -117,6 +127,7 @@ namespace AspNetCoreIdentityExample.Controllers
                     ModelState.AddModelError("NotUser2", "E-posta veya şifre yanlış.");
                 }
             }
+
             return View(model);
         }
 
@@ -347,6 +358,25 @@ namespace AspNetCoreIdentityExample.Controllers
                 }
             }
             return Redirect(ReturnUrl);
+        }
+
+        public async Task<IActionResult> TwoFactorAuthenticate(string ReturnUrl) => View();
+        [HttpPost]
+        public async Task<IActionResult> TwoFactorAuthenticate(string ReturnUrl, TwoFactorLoginVM model)
+        {
+            AppUser user = await _signInManager.GetTwoFactorAuthenticationUserAsync();
+            Microsoft.AspNetCore.Identity.SignInResult result = null;
+            if (model.Recovery)
+                result = await _signInManager.TwoFactorRecoveryCodeSignInAsync(model.VerifyCode);
+            else
+                result = await _signInManager.TwoFactorAuthenticatorSignInAsync(model.VerifyCode, true, false);
+
+            if (result.Succeeded)
+                return Redirect(string.IsNullOrEmpty(ReturnUrl) ? "/home/index" : ReturnUrl);
+            else
+                ModelState.AddModelError("verifycode", "Doğrulama kodu yanlış girilmiştir!");
+
+            return View(model);
         }
     }
 }

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AspNetCoreIdentityExample.Models.Enums;
 using AspNetCoreIdentityExample.Models.ViewModels;
 
 namespace AspNetCoreIdentityExample.Models.Authentication
@@ -11,6 +12,7 @@ namespace AspNetCoreIdentityExample.Models.Authentication
     {
         public string Memleket { get; set; }
         public bool Cinsiyet { get; set; }
+        public TwoFactorType TwoFactorType { get; set; }
 
         public static implicit operator UserDetailViewModel(AppUser user)
         {

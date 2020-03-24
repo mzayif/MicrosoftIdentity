@@ -7,37 +7,83 @@
     <script src="~/jquery/jquery.js"></script>
     <script src="~/lib/jquery-validate/jquery.validate.js"></script>
     <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
+    @RenderSection("Scripts", false)
 </head>
 <body>
-    <div>
-        <a asp-action="Page1" asp-controller="Pages">Tor</a> |
-        <a asp-action="Page2" asp-controller="Pages">Editor</a> |
-        <a asp-action="Page3" asp-controller="Pages">Moderator</a> |
-        <a asp-action="Page4" asp-controller="Pages">Admin</a> |
-        <a asp-action="Page5" asp-controller="Pages">TimeControl policy</a>|
-        <a asp-action="Page6" asp-controller="Pages">UserClaimNamePolicy policy</a> |
-        <a asp-action="Page7" asp-controller="Pages">UserClaimPositionPolicy policy</a> 
-        <br />
-        <a asp-action="Index" asp-controller="User">Index</a> |
-        <a asp-action="Signin" asp-controller="User">Signin</a> |
-        @if (User.Identity.IsAuthenticated)
-        {
-            <a asp-action="Index" asp-controller="Role">Roles</a>
-            @: |
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="#">Navbar</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
 
-            <a asp-action="Profile" asp-controller="User">Profile</a>
-            @: |
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+                <a class="nav-link" asp-action="Index" asp-controller="Home">Home <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item active">
+                <a class="nav-link" asp-action="Page1" asp-controller="Pages">Page1 <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item active">
+                <a class="nav-link" asp-action="Page2" asp-controller="Pages">Page2 <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item active">
+                <a class="nav-link" asp-action="Page3" asp-controller="Pages">Page3 <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item active">
+                <a class="nav-link" asp-action="SelectTwoFactorAuthentication" asp-controller="TwoAuthentication">İki Adımlı Doğrulama <span class="sr-only">(current)</span></a>
+            </li>
 
-            <a asp-action="Logout" asp-controller="User" asp-route-returnUrl="/User/Signin">Logout</a>
-        }
-        else
-        {
-            <a asp-action="Login" asp-controller="User">Login</a>
-            @: |
-        }
-
-        <br />
-        @RenderBody()
+            @if (!User.Identity.IsAuthenticated)
+            {
+                <li class="nav-item active">
+                    <a class="nav-link" asp-action="SignIn" asp-controller="User">Kaydol <span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link" asp-action="Index" asp-controller="User"> Giriş Yap<span class="sr-only">(current)</span></a>
+                </li>
+            }
+            else
+            {
+                <li class="nav-item active">
+                    <a class="nav-link" asp-action="Logout" asp-controller="User"> Çıkış Yap<span class="sr-only">(current)</span></a>
+                </li>
+            }
+        </ul>
     </div>
+</nav>
+<br/>
+<br/>
+<br/>
+<div>
+    <a asp-action="Page1" asp-controller="Pages">Tor</a> |
+    <a asp-action="Page2" asp-controller="Pages">Editor</a> |
+    <a asp-action="Page3" asp-controller="Pages">Moderator</a> |
+    <a asp-action="Page4" asp-controller="Pages">Admin</a> |
+    <a asp-action="Page5" asp-controller="Pages">TimeControl policy</a>|
+    <a asp-action="Page6" asp-controller="Pages">UserClaimNamePolicy policy</a> |
+    <a asp-action="Page7" asp-controller="Pages">UserClaimPositionPolicy policy</a>
+    <br/>
+    <a asp-action="Index" asp-controller="User">Index</a> |
+    <a asp-action="Signin" asp-controller="User">Signin</a> |
+    @if (User.Identity.IsAuthenticated)
+    {
+        <a asp-action="Index" asp-controller="Role">Roles</a>
+        @: |
+
+        <a asp-action="Profile" asp-controller="User">Profile</a>
+        @: |
+
+        <a asp-action="Logout" asp-controller="User" asp-route-returnUrl="/User/Signin">Logout</a>
+    }
+    else
+    {
+        <a asp-action="Login" asp-controller="User">Login</a>
+        @: |
+    }
+
+    <br/>
+    @RenderBody()
+</div>
 </body>
 </html>

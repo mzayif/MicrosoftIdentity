@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using AspNetCoreIdentityExample.CustomValidations;
 using AspNetCoreIdentityExample.Models.Authentication;
 using AspNetCoreIdentityExample.Models.Context;
+using AspNetCoreIdentityExample.Servises;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -39,6 +40,7 @@ namespace AspNetCoreIdentityExample
                 .AddPasswordValidator<CustomPasswordValidation>()
                 .AddErrorDescriber<CustomIdentityErrorDescriber>()
                 .AddDefaultTokenProviders()
+                .AddDefaultTokenProviders()
                 .AddEntityFrameworkStores<AppDbContext>();
 
             services.ConfigureApplicationCookie(m =>
@@ -65,6 +67,7 @@ namespace AspNetCoreIdentityExample
 
             // services.AddControllersWithViews();
             services.AddScoped<IClaimsTransformation, UserClaimProvider>();
+            services.AddScoped<AuthenticatorService, AuthenticatorService>();
             // manuel Claim policy/politika(Yetki) tipi oluşturulup sisteme eklenir.
             // istenilen metot veya controllere authorize yetksi olarak eklenerek yetki kontrolü yapılması sağlanabilir.
             // Bu alanalr daha çok kullanıcı bazlı özellikleri tutmak için düşünülebilir.
