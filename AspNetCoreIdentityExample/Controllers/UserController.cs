@@ -153,12 +153,12 @@ namespace AspNetCoreIdentityExample.Controllers
                 MailMessage mail = new MailMessage();
                 mail.IsBodyHtml = true;
                 mail.To.Add(user.Email);
-                mail.From = new MailAddress("muhammed.zayif@gmail.com", "Şifre Güncelleme", System.Text.Encoding.UTF8);
+                mail.From = new MailAddress("***************@gmail.com", "Şifre Güncelleme", System.Text.Encoding.UTF8);
                 mail.Subject = "Şifre Güncelleme Talebi";
                 mail.Body = $"<a target=\"_blank\" href=\"https://localhost:5001{Url.Action("UpdatePassword", "User", new { userId = user.Id, token = HttpUtility.UrlEncode(resetToken) })}\">Yeni şifre talebi için tıklayınız</a>";
                 mail.IsBodyHtml = true;
                 SmtpClient smp = new SmtpClient();
-                smp.Credentials = new NetworkCredential("muhammed.zayif@gmail.com", "Prenses0");
+                smp.Credentials = new NetworkCredential("***********@gmail.com", "******");
                 smp.Port = 587;
                 smp.Host = "smtp.gmail.com";
                 smp.EnableSsl = true;
